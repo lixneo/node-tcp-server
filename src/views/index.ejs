@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    IP地址<input type="text" placeholder="192.168.30.1:12306" id="address" />
+    <!-- <button id="link-btn">连接</button> -->
+    <br />
+    <input id="content" type="text" placeholder="hello" />
+    <button id="send-btn">发送</button>
+    <view id="main-view"></view>
+    <script>
+      document.getElementById("send-btn").onclick = function () {
+        let address =
+          document.getElementById("address").value || "192.168.30.1:12306";
+        let content = document.getElementById("content").value || "hello";
+        fetch("/send", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            address,
+            content,
+          }),
+        })
+          .then((response) => {
+            if (response.ok) {
+              response.blob().then((blob) => {
+                const reader = new FileReader();
+                reader.readAsText(blob, "GB2312");
+                reader.onload = (a) => {
+                  let convertList = [];
+                  if (reader.result && reader.result.length > 0) {
+                    const data = reader.result;
+                    console.log(data);
+                  }
+                };
+              });
+            } else {
+              console.log("请求失败");
+            }
+          })
+          .catch((err) => console.log(err));
+      };
+    </script>
+  </body>
+</html>
